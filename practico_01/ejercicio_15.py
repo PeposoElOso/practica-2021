@@ -33,7 +33,7 @@ n = 11
 limite = 10
 lista = list(range(n))
 
-start = perf_counter()
+start = perf_counter()                          #esta funcion nos da el tiempo total de la cpu en un float
 result = calcular_posibilidades(lista, limite)
 elapsed = perf_counter() - start
 
@@ -55,8 +55,11 @@ def medir_tiempo(func: Callable[[], int]) -> Tuple[int, float]:
     Restricción: La función no debe tomar parámetros y por lo tanto se
     recomienda usar partial.
     """
-    pass # Completar
-
+    start = perf_counter()
+    result = func()
+    elapsed = perf_counter()-start
+    output_tuple = (result, elapsed)
+    return output_tuple 
 
 # NO MODIFICAR - INICIO
 result, elapsed = medir_tiempo(partial(calcular_posibilidades, lista, limite))
@@ -73,8 +76,13 @@ def medir_tiempo(func: Callable[[Sequence[int], int], int]) -> Callable[[Sequenc
     partial. En este caso se debe devolver una función que devuelva la tupla y
     tome una cantidad arbitraria de parámetros.
     """
-    pass # Completar
-
+    def calcular_posibilidades(lista: Sequence[int], limite: int) -> Tuple[int, float]:
+        start = perf_counter()
+        result = func(lista, limite)
+        elapsed = perf_counter()-start
+        output_tuple = (result, elapsed)
+        return output_tuple 
+    return calcular_posibilidades
 
 # NO MODIFICAR - INICIO
 calcular_posibilidades_nueva = medir_tiempo(calcular_posibilidades)
