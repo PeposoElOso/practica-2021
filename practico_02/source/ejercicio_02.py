@@ -11,6 +11,11 @@ $PATH$/practico_02> python -m source.ejercicio_02
 """
 
 # Completar
+#import main as main
+import util as util
+import data.database as database
+import config.test_config as test_config
+from config.db_config import migrations
 
 
 # NO MODIFICAR - INICIO
