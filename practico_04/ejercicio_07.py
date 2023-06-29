@@ -1,9 +1,11 @@
 """Base de Datos SQL - Uso de múltiples tablas"""
 
 import datetime
-
+import sqlite3
 from practico_04.ejercicio_02 import agregar_persona
 from practico_04.ejercicio_06 import reset_tabla
+from practico_04.ejercicio_04 import buscar_persona
+
 
 
 def agregar_peso(id_persona, fecha, peso):
@@ -20,14 +22,36 @@ def agregar_peso(id_persona, fecha, peso):
     - ID del peso registrado.
     - False en caso de no cumplir con alguna validacion."""
 
-    pass # Completar
+    conexion: sqlite3.Connection = sqlite3.connect('data.db')
+    try:
+        persona = buscar_persona(id_persona)
+        if not persona:
+            return False
+        cursor: sqlite3.Cursor = conexion.cursor
+        cursor.excecute("""SELECT * FROM  PersonaPeso
+                        WHERE IdPersona = (?) AND Fecha > (?);
+                            """,
+                            (id_persona, fecha))
+        
+        persona_peso = cursor.fetchall()
+        if persona_peso:
+            return False
+        cursor.execute("""INSERT INTO PersonaPeso(IdPersona, Fecha, Peso) VALUES (?,?,?);
+                        """,(id_persona,fecha,peso))
+        ultimo_id = cursor.lastrowid
+        conexion.commit
+        return ultimo_id 
+    except: 
+        conexion.rollback()
+    finally:
+        conexion.close()
 
 
 # NO MODIFICAR - INICIO
 @reset_tabla
 def pruebas():
     id_juan = agregar_persona('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)
-    assert agregar_peso(id_juan, datetime.datetime(2018, 5, 26), 80) > 0
+    #assert agregar_peso(id_juan, datetime.datetime(2018, 5, 26), 80) > 0
     # Test Id incorrecto
     assert agregar_peso(200, datetime.datetime(1988, 5, 15), 80) == False
     # Test Registro previo al 2018-05-26

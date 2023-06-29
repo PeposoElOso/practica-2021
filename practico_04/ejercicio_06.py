@@ -1,7 +1,7 @@
 """Base de Datos SQL - Creación de tablas auxiliares"""
 
 from practico_04.ejercicio_01 import borrar_tabla, crear_tabla
-
+import sqlite3
 
 def crear_tabla_peso():
     """Implementar la funcion crear_tabla_peso, que cree una tabla PersonaPeso con:
@@ -9,13 +9,36 @@ def crear_tabla_peso():
         - Fecha: Date()
         - Peso: Int()
     """
-    pass # Completar
-
+    conexion: sqlite3.Connection = sqlite3.connect('data.db')
+    try:
+        cursor  = conexion.cursor()
+        query = """CREATE A TABLE IF NOT EXISTS PersonaPeso
+                        (IdPersona INTEGER PRIMARY KEY,
+                        Fecha DATETIME,
+                        Peso INTEGER,
+                        FOREGIN KEY (IdPersona) REFERENCES Persona(IdPersona));"""
+                 
+        cursor.execute(query)
+        conexion.commit()
+        
+    except:
+        conexion.rollback()
+    finally:
+        conexion.close()
 
 def borrar_tabla_peso():
     """Implementar la funcion borrar_tabla, que borra la tabla creada 
     anteriormente."""
-    pass # Completar
+    conexion: sqlite3.Connection = sqlite3.connect('data.db')
+    try:
+        cursor  : sqlite3.Cursor = conexion.cursor()
+       
+        cursor.execute(""" DROP TABLE IF EXISTS PersonaPeso;""")
+        conexion.commit()
+    except sqlite3.OperationalError as exception: 
+        conexion.rollback()
+    finally:
+        conexion.close()
 
 
 # NO MODIFICAR - INICIO
